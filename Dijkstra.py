@@ -1,22 +1,40 @@
 import heapq
 
-def shortest_path_by_dijkstra(graph, source, target):
-    distance_node_pairs = []
 
-    for node in graph:
-        if node == source:
-            heapq.heappush(distance_node_pairs, [0, node])
-        else:
-            heapq.heappush(distance_node_pairs, [float('inf'), node])
+def shortest_path(grid, source, destination):    
+    my_heap = []
+    previous = {}
     
-    while distance_node_pairs:
-        distance, node = heapq.heappop(distance_node_pairs)
-        if node == target:
-            return distance
-
-        for idx, next_distance_node_pair in enumerate(distance_node_pairs):
-            alternative = distance + graph[node][next_distance_node_pair[1]]
-            if alternative < next_distance_node_pair[0]:
-                distance_node_pairs[idx][0] = alternative
-
-    return -1
+    for i in range(len(grid)):
+        for j in range(len(grid)):
+            if grid[i][j] is False:
+                continue
+                
+            if (i, j) == source:
+                heapq.heappush(my_heap, [0, (i, j)])
+            else:
+                heapq.heappush(my_heap, [float('inf'), (i, j)])
+    
+    while my_heap:
+        distance, node = heapq.heappop(my_heap)
+        
+        if node == destination:
+            path = [node]
+            while node in previous:
+                path.append(previous[node])
+                node = previous[node]
+            
+            return distance, list(reversed(path))
+        
+        if distance == float('inf'):
+            return -1, []
+        
+        for idx, distance_node in enumerate(my_heap):
+            next_node = distance_node[1]
+            if abs(next_node[0] - node[0]) + abs(next_node[1] - node[1]) != 1:
+                continue
+                
+            alternative = distance + 1
+            if alternative < distance_node[0]:
+                my_heap[idx][0] = alternative
+                previous[next_node] = node
