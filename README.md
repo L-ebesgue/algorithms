@@ -2,4 +2,3 @@
 
 References
 - Introduction to algorithms
-- Problems: Leetcode, Codeforces
